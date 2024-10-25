@@ -5,7 +5,7 @@ USE ProjectCovid --Select the DB as active
 SELECT		cde.location AS Continent,MAX(cva.total_vaccinations) AS Total_Vaccinations,
 			MAX(cde.population) AS Population
 FROM		CovidVaccinations cva
-JOIN		coviddeaths cde ON cde.location=cva.location 
+JOIN		UpdatedCovidDeaths cde ON cde.location=cva.location 
 			AND cde.date=cva.date
 WHERE		(cde.continent IS NULL)  AND (cde.location!='International')
 			AND (cde.location!='European Union')
@@ -16,7 +16,7 @@ ORDER BY	cde.location,total_vaccinations
 SELECT		cva.continent,cva.location,MAX(cva.total_vaccinations) AS Total_Vaccinations,
 			MAX(cde.population) AS Population
 FROM		CovidVaccinations cva
-JOIN		coviddeaths cde ON cde.location=cva.location 
+JOIN		UpdatedCovidDeaths cde ON cde.location=cva.location 
 			AND cde.date=cva.date
 WHERE		cde.continent IS NOT NULL
 GROUP BY	cva.continent,cva.location
@@ -27,7 +27,7 @@ SELECT		cde.location,cde.date, cde.population,
 			cva.new_vaccinations,SUM(CAST(cva.new_vaccinations AS INT)) OVER
 			(PARTITION by cde.location ORDER BY cde.location,cde.date) AS RollSum
 FROM		ProjectCovid..CovidVaccinations cva
-JOIN		ProjectCovid..CovidDeaths cde  ON cde.location = cva.location 
+JOIN		UpdatedCovidDeaths cde  ON cde.location = cva.location 
 			AND cde.date = cva.date
 WHERE		cde.continent IS  NULL AND cde.location!='International'
 			AND cde.location!='World' AND cde.location!='European Union';
@@ -37,7 +37,7 @@ SELECT		cde.location,CAST (cde.date AS DATE)  AS Date, cde.population,
 			cva.new_vaccinations,SUM(CAST(cva.new_vaccinations AS INT)) OVER
 			(PARTITION by cde.location ORDER BY cde.location,cde.date) AS RollSum
 FROM		ProjectCovid..CovidVaccinations cva
-JOIN		ProjectCovid..CovidDeaths cde  ON cde.location = cva.location 
+JOIN		ProjectCovid..UpdatedCovidDeaths cde  ON cde.location = cva.location 
 			AND cde.date = cva.date
 WHERE		cde.continent IS NOT NULL;
 -------------------------------------------------------------------
@@ -45,7 +45,7 @@ WHERE		cde.continent IS NOT NULL;
 SELECT		cva.continent,cva.location,MAX(cva.total_vaccinations) AS Total_Vaccinations,
 			MAX(cde.population) AS Population
 FROM		CovidVaccinations cva
-JOIN		coviddeaths cde ON cde.location=cva.location 
+JOIN		UpdatedCovidDeaths cde ON cde.location=cva.location 
 			AND cde.date=cva.date
 WHERE		cde.continent IS NOT NULL 
 			AND (cde.location='Germany' OR cde.location='Honduras')
@@ -58,7 +58,7 @@ CREATE VIEW	RollPopulationVaccinated AS
 SELECT		cde.continent,cde.location,cde.date,cde.population,
 			cva.new_vaccinations,SUM(CAST(cva.new_vaccinations AS INT)) 
 			OVER (PARTITION BY cde.location) AS RollSum
-FROM		CovidDeaths cde
+FROM		UpdatedCovidDeaths cde
 JOIN		CovidVaccinations cva ON cva.location=cde.location AND cva.date=cde.date
 WHERE		cde.continent IS NOT NULL 
 -------------------------------------------------------------------

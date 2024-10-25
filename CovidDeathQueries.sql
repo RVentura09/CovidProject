@@ -8,27 +8,26 @@ SELECT		SUM (DISTINCT(population))  as Total_Population,
 			ROUND((SUM(new_cases)/SUM (DISTINCT(population)))*100,2) as 'Total Infected (%)',
 			ROUND(SUM(CAST(new_deaths as INT))/SUM(new_cases)*100,2) as 'Total Death (%)'
 			
-FROM		coviddeaths
+FROM		UpdatedCovidDeaths
 WHERE		continent IS NOT NULL
 			--Dataset contains a grouping by continent therefore we will consider only
 			--individual countries that have a continent 
 
 ---------------------------------------------------------------------------------------
-
-
----------------------------------------------------------------------------------------
 --Compare highest infection and death rate in all continents
 
-SELECT		CAST(date AS DATE) as Date,continent,location,population,MAX(total_cases) AS TotalInfections,
+SELECT		continent,location,population,MAX(total_cases) AS TotalInfections,
 			ROUND(MAX((total_cases/population))*100,2) as PercentInfectedPeople,
-			MAX(total_deaths) AS TotalDeaths,
+			SUM(cast(new_deaths as int)) AS TotalDeaths,
 			ROUND(MAX((total_deaths/total_cases))*100,2) as DeathRate
-FROM		coviddeaths
-WHERE		continent IS NOT NULL and location not in ('World', 'European Union', 'International')
+FROM		UpdatedCovidDeaths
+WHERE		continent IS  NULL and location not in ('World', 'European Union (27)', 'International','Lower-middle-income countries',
+			'Upper-middle-income countries','High-income countries','Low-income countries') AND population>0 AND total_cases>0
+
 			--Dataset contains a grouping by continent in the location column 
 			--and those have null values for the continent column 
 			--therefore we will only consider locations with null as continent 
-GROUP BY	location,population,continent,date
+GROUP BY	location,population,continent
 ORDER BY	DeathRate DESC,PercentInfectedPeople DESC,TotalDeaths;
 
 ---------------------------------------------------------------------------------------
@@ -36,7 +35,7 @@ ORDER BY	DeathRate DESC,PercentInfectedPeople DESC,TotalDeaths;
 
 SELECT		location,population,MAX(total_cases) AS TotalInfections,
 			ROUND(MAX((total_cases/population))*100,2) as PercentInfectedPeople,continent
-FROM		coviddeaths
+FROM		UpdatedCovidDeaths
 WHERE		continent IS NOT NULL
 			--Dataset contains a grouping by continent therefore we will consider only
 			--individual countries that have a continent 
@@ -46,26 +45,36 @@ ORDER BY	location,continent ,PercentInfectedPeople DESC;
 --Compare highest death rate in all countries
 
 SELECT		location,population,MAX(total_cases) AS TotalInfections,
-			MAX(total_deaths) AS TotalDeaths,
+			MAX(CAST(total_deaths AS INT)) AS TotalDeaths,
 			ROUND(MAX((total_deaths/total_cases))*100,2) as DeathRate
-FROM		coviddeaths
-WHERE		continent IS NOT NULL
+FROM		UpdatedCovidDeaths
+WHERE		continent IS NOT NULL AND total_cases>0
 			--Dataset contains a grouping by continent therefore we will consider only
 			--individual countries that have a continent 
 GROUP BY	location,population
 ORDER BY	DeathRate DESC,TotalDeaths DESC,TotalInfections DESC,population DESC;
+
+
+
+
+
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------
 --Compare only data overt time from Germany and Honduras.
 --Select  total cases, total deaths,population and the death percentage 
 
 
-SELECT		location,CAST(Date AS Date) as Date,total_cases,total_deaths,population, 
+SELECT		location,CAST(Date AS Date) as Date,MAX(total_cases),MAX(total_deaths),MAX(population), 
 			--We are using cast to remove time data from the date column 
 			--the first "Date" is the name of the column the second "Date" is the data type
 			--the last "as Date" is the final name that column will display in results
 			(total_deaths/total_cases)*100 AS DeathPercentage
-FROM		coviddeaths
-WHERE		location like '%Honduras%' OR location like '%Germany%'
+FROM		UpdatedCovidDeaths
+WHERE		location like '%Honduras%' OR location like '%Germany%' AND total_deaths>0 AND total_cases>0
+GROUP BY	DATE,LOCATION,total_deaths,total_cases
 Order by	1,2;
 
 ---------------------------------------------------------------------------------------
@@ -78,8 +87,11 @@ SELECT		location,population,MAX(total_cases) AS TotalInfections,
 			--as the maximum number of total deaths for Honduras was capped at only 99. 
 			ROUND(MAX((total_cases/population))*100,2) as PercentInfectedPeople,
 			ROUND(MAX((total_deaths/total_cases))*100,2) as DeathRate
-FROM		coviddeaths
+FROM		UpdatedCovidDeaths
 WHERE		location LIKE '%Honduras%' OR location='Germany'
 GROUP BY	location,population
 ORDER BY	DeathRate DESC,TotalInfections DESC,population DESC;
 ---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+
