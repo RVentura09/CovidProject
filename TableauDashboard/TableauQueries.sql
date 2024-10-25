@@ -3,10 +3,10 @@ USE ProjectCovid -- Set the DB to be active
 ----------------------------Tableau Queries--------------------------------------------
 
 --DateCountryInfectedSummary.CSV-------------------------------------
-Select Location, Population,CAST(date AS DATE) AS Date,  MAX(total_cases) as HighestInfectionCount,  Max((total_cases/population))*100 as PercentPopulationInfected
+Select continent,Location, Population,CAST(date AS DATE) AS Date,  MAX(total_cases) as HighestInfectionCount,  Max((total_cases/population))*100 as PercentPopulationInfected
 From UpdatedCovidDeaths
 
-Group by Location, Population,date
+Group by Location, Population,date,continent
 order by PercentPopulationInfected desc
 ------------------------------------------------------------------
 --Globalsummary.csv 
@@ -48,7 +48,7 @@ WHERE		continent IS NOT NULL
 			--Dataset contains a grouping by continent therefore we will consider only
 			--individual countries that have a continent 
 GROUP BY	location,population,continent
-ORDER BY	location,continent ,PercentInfectedPeople DESC;
+ORDER BY	location ,PercentInfectedPeople DESC;
 
 
 
