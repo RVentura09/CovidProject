@@ -10,7 +10,7 @@ The purpose of this project is to showcase my proficiency in SQL and data visual
 
 - **SQL Queries**: There are two `.sql` files containing queries designed to explore the previously mentioned datasets. Each file includes a total of six queries.
 
-- **Tableau Dashboard**: This folder contains the project in `.twb` format and an image of the final dashboard `Dashboard.jpg`. Additionally, it includes a summary of the queries performed on the original dataset in the file `TableauQueries.sql`. Within the TableauDataset folder, you will find the results of these queries in `.csv` format.
+- **Tableau Dashboard**: This folder contains the project in `.twb` format and an image of the final dashboard `Dashboard.jpg`.The dashboard is also available at [TableauPublic](https://public.tableau.com/views/TableauDashboard_17298852675510/Dashboard1?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link). Additionally, it includes a summary of the queries performed on the original dataset in the file `TableauQueries.sql`. Within the TableauDataset folder, you will find the results of these queries in `.csv` format. 
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 ## Disclaimer
   This project is based on the idea of [Alex the Analyst](https://www.youtube.com/channel/UC7cs8q-gJRlGwj4A8OmCmXg).
